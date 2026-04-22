@@ -1,0 +1,37 @@
+@startuml Вариант 2: Standalone / SaaS-ready
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!pragma layout smetana
+
+' Пользователи
+Person(operator, "Оператор фермы", "Дежурный сотрудник на месте.\nПолучает алерты и управляет\nкормушками/поилками локально.")
+Person(vet, "Зоотехник", "Здоровье стада, анализ инцидентов")
+Person(director, "Директор", "Отчеты")
+Person(analyst, "Аналитик", "Аналитика, BI")
+Person(ext_client, "Внешний клиент (SaaS)", "Другое сельхозпредприятие,\nарендующее платформу как сервис")
+
+' Внутренние системы
+System(platform, "Платформа мониторинга свиноводства", "Центральный сервер + агенты на фермах")
+' Внешние системы
+' Новые
+System_Ext(iot, "IoT-устройства", "Камеры, кормушки, поилки")
+System_Ext(water_filter, "Система фильтрации воды", "")
+System_Ext(ml, "ML-модели (партнёрские)", "Анализ видео, детекция инцидентов")
+System_Ext(sms, "SMS-шлюз", "Уведомления без интернета")
+
+' Связи
+' С пользователями
+Rel(operator, platform, "Получает алерты, управляет устройствами", "Мобильное приложение")
+Rel(vet, platform, "Анализирует здоровье стада и инциденты")
+Rel(director, platform, "Смотрит KPI и отчеты")
+Rel(analyst, platform, "Аналитика")
+Rel(sms, operator, "Получает алерты")
+Rel(ext_client, platform, "Использует платформу\nдля своих ферм", "SaaS API / Web UI")
+' С системами
+Rel(platform, sms, "Отправляет алерты")
+Rel(platform, iot, "Управляет кормушками и поилками")
+Rel(platform, ml, "Запрашивает инференс (детекция драк, болезней, подсчёт поголовья)")
+Rel(iot, platform, "Передаёт видео и показания датчиков")
+Rel(water_filter, platform, "Передаёт данные о состоянии фильтров")
+
+@enduml
